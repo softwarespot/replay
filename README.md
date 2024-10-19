@@ -1,4 +1,6 @@
-# Replay [![Go Reference](https://pkg.go.dev/badge/github.com/softwarespot/replay.svg)](https://pkg.go.dev/github.com/softwarespot/replay) ![Go Tests](https://github.com/softwarespot/replay/actions/workflows/go.yml/badge.svg)
+# Replay
+
+[![Go Reference](https://pkg.go.dev/badge/github.com/softwarespot/replay.svg)](https://pkg.go.dev/github.com/softwarespot/replay) ![Go Tests](https://github.com/softwarespot/replay/actions/workflows/go.yml/badge.svg)
 
 **Replay** is a generic, non-thread-safe implementation, designed to store and manage a fixed-size buffer of events with expiration logic in-built.
 
