@@ -23,7 +23,6 @@ func ExampleReplay_All() {
 	for evt := range r.All() {
 		fmt.Printf("event: %s\n", evt)
 	}
-
 	// output: event: Event 1
 	// event: Event 2
 	// event: Event 3
