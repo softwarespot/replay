@@ -2,10 +2,12 @@
 
 [![Go Reference](https://pkg.go.dev/badge/github.com/softwarespot/replay.svg)](https://pkg.go.dev/github.com/softwarespot/replay) ![Go Tests](https://github.com/softwarespot/replay/actions/workflows/go.yml/badge.svg)
 
-**Replay** is a generic, non-thread safe implementation, designed to store and manage a fixed-size buffer of events with expiration logic in-built.
+**Replay** is a generic, non-thread safe module, designed to store and manage a fixed-size buffer of events with expiration logic in-built.
 
-This is useful in scenarios where you need to keep track of recent events while automatically discarding those outdated events.
-For example in a chat application where new users should see the last N number of messages, then this implementation is perfect for such a use case.
+This is particularly useful for cases where you need to keep track of recent events, while automatically discarding those which are outdated.
+For example, this could be used in a chat application where new users must see the last N number of messages.
+
+Examples of using this module can be found from the [./examples](./examples/) directory.
 
 ## Prerequisites
 
