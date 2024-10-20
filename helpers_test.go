@@ -27,8 +27,7 @@ func assertEqualForAll[T any](t testing.TB, r *Replay[T], correct []T) {
 }
 
 // parseAsDateTime parses a string representation of date and time
-// in the format "YYYY-MM-DD HH:MM:SS" into a time.Time value
-// based on the local time zone
+// in the format "YYYY-MM-DD HH:MM:SS" into a time.Time value based on the local time zone
 func parseAsDateTime(tt string) time.Time {
 	t, err := time.ParseInLocation("2006-01-02 15:04:05", tt, time.Local)
 	if err != nil {

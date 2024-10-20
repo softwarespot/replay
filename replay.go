@@ -37,8 +37,7 @@ func (r *Replay[T]) All() iter.Seq[T] {
 		now := nowFn()
 		for i := 0; i < r.maxSize; i++ {
 			idx := (r.idx + i) % r.maxSize
-			evt := r.events[idx]
-			if evt.expires.After(now) {
+			if evt := r.events[idx]; evt.expires.After(now) {
 				if !yield(evt.event) {
 					return
 				}
@@ -47,14 +46,16 @@ func (r *Replay[T]) All() iter.Seq[T] {
 	}
 }
 
-// Add adds an event to the replay buffer.
-// If the replay buffer is full, then the oldest event will be overwritten with the new event.
-func (r *Replay[T]) Add(evt T) {
-	r.events[r.idx] = replayedEvent[T]{
-		event:   evt,
-		expires: nowFn().Add(r.expiry),
+// Add adds one or more events to the replay buffer.
+// If the replay buffer is full, then the oldest event will be overwritten.
+func (r *Replay[T]) Add(evts ...T) {
+	for _, evt := range evts {
+		r.events[r.idx] = replayedEvent[T]{
+			event:   evt,
+			expires: nowFn().Add(r.expiry),
+		}
+		r.idx = (r.idx + 1) % r.maxSize
 	}
-	r.idx = (r.idx + 1) % r.maxSize
 }
 
 // Clear resets the replay buffer.
