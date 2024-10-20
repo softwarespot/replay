@@ -10,7 +10,7 @@ import (
 func assertEqual[T any](t testing.TB, got, correct T) {
 	t.Helper()
 	if !reflect.DeepEqual(got, correct) {
-		t.Fatalf("AssertEqual: expected values to be equal, got:\n%+v\ncorrect:\n%+v", got, correct)
+		t.Fatalf("assertEqual: expected values to be equal, got:\n%+v\ncorrect:\n%+v", got, correct)
 	}
 }
 
@@ -21,7 +21,9 @@ func assertEqualForAll[T any](t testing.TB, r *Replay[T], correct []T) {
 	for evt := range r.All() {
 		got = append(got, evt)
 	}
-	assertEqual(t, got, correct)
+	if !reflect.DeepEqual(got, correct) {
+		t.Fatalf("assertEqualForAll: expected values to be equal, got:\n%+v\ncorrect:\n%+v", got, correct)
+	}
 }
 
 // parseAsDateTime parses a string representation of date and time
