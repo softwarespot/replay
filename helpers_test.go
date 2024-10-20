@@ -7,7 +7,7 @@ import (
 )
 
 // assertEqual checks if two values are equal. If they are not, it logs using t.Fatalf()
-func assertEqual[T any](t *testing.T, got, correct T) {
+func assertEqual[T any](t testing.TB, got, correct T) {
 	t.Helper()
 	if !reflect.DeepEqual(got, correct) {
 		t.Fatalf("AssertEqual: expected values to be equal, got:\n%+v\ncorrect:\n%+v", got, correct)
@@ -15,7 +15,7 @@ func assertEqual[T any](t *testing.T, got, correct T) {
 }
 
 // assertEqualForAll check if the replayed events are equal. If they are not, it logs using t.Fatalf()
-func assertEqualForAll[T any](t *testing.T, r *Replay[T], correct []T) {
+func assertEqualForAll[T any](t testing.TB, r *Replay[T], correct []T) {
 	t.Helper()
 	var got []T
 	for evt := range r.All() {
