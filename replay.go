@@ -13,7 +13,7 @@ type replayedEvent[T any] struct {
 	expires time.Time
 }
 
-// A generic, non-thread safe replay buffer.
+// Replay is a generic, non-thread safe replay buffer.
 type Replay[T any] struct {
 	idx     int
 	events  []replayedEvent[T]

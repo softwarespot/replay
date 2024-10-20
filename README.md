@@ -45,7 +45,7 @@ func main() {
 }
 ```
 
-**Replay** by default is not thread-safe.
+**Replay** by default is non-thread safe.
 This is an example of creating a thread-safe wrapper, in just a few lines of code.
 
 ```Go
