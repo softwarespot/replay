@@ -58,7 +58,7 @@ func (r *Replay[T]) Add(evts ...T) {
 	}
 }
 
-// Clear resets the replay buffer.
+// Clear clears the replay buffer.
 func (r *Replay[T]) Clear() {
 	clear(r.events)
 	r.idx = 0
