@@ -21,10 +21,10 @@ func NewSyncReplay[T any](maxSize int, expiry time.Duration) *SyncReplay[T] {
 	}
 }
 
-func (sr *SyncReplay[T]) Add(evt T) {
+func (sr *SyncReplay[T]) Add(evts ...T) {
 	sr.mu.Lock()
 	defer sr.mu.Unlock()
-	sr.replay.Add(evt)
+	sr.replay.Add(evts...)
 }
 
 func (sr *SyncReplay[T]) All() iter.Seq[T] {
@@ -38,7 +38,7 @@ type Event struct {
 }
 
 func main() {
-	// Create a sync replay buffer of type "Event"
+	// Create a sync replay buffer with the type "Event"
 	sr := NewSyncReplay[Event](64, 256*time.Second)
 	go func() {
 		var id int

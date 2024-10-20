@@ -38,8 +38,8 @@ func main() {
 	// Create a replay buffer with the type "string"
    	r := replay.New[string](64, 128*time.Second)
 	r.Add("Event 1")
-	r.Add("Event 2")
-	r.Add("Event 3")
+	r.Add("Event 2", "Event 3")
+	r.Add("Event 4")
 
 	for evt := range r.All() {
 		fmt.Printf("event: %s\n", evt)
@@ -74,10 +74,10 @@ func NewSyncReplay[T any](maxSize int, expiry time.Duration) *SyncReplay[T] {
 	}
 }
 
-func (sr *SyncReplay[T]) Add(evt T) {
+func (sr *SyncReplay[T]) Add(evts ...T) {
 	sr.mu.Lock()
 	defer sr.mu.Unlock()
-	sr.replay.Add(evt)
+	sr.replay.Add(evts...)
 }
 
 func (sr *SyncReplay[T]) All() iter.Seq[T] {
