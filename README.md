@@ -2,12 +2,12 @@
 
 [![Go Reference](https://pkg.go.dev/badge/github.com/softwarespot/replay.svg)](https://pkg.go.dev/github.com/softwarespot/replay) ![Go Tests](https://github.com/softwarespot/replay/actions/workflows/go.yml/badge.svg)
 
-**Replay** is a generic, non-thread safe module, designed to store and manage a fixed-size buffer of events with expiration logic in-built.
+**Replay** is a generic compatible module with a thread (**SyncReplay**) and non-thread (**Replay**) safe implementation. It's designed to store and manage a fixed-size buffer of events with expiration logic in-built.
 
 This is particularly useful for cases where you need to keep track of recent events, while automatically discarding those which are outdated.
-For example, this could be used in a chat application where new users must see the last N number of messages.
+For example, this could be used in a chat application where new users who join, must see the recently posted messages.
 
-Examples of using this module can be found from the [./examples](./examples/) directory.
+Examples of using this module can be found from the [./examples](./examples) directory.
 
 ## Prerequisites
 
@@ -47,44 +47,17 @@ func main() {
 }
 ```
 
-**Replay** by default is non-thread safe.
-Therefore, here is an example of creating a thread-safe wrapper, in just a few lines of code.
+A basic example of using **SyncReplay**.
 
 ```Go
 package main
 
 import (
 	"fmt"
-	"iter"
-	"sync"
 	"time"
 
 	"github.com/softwarespot/replay"
 )
-
-// A generic thread-safe wrapper around replay.
-type SyncReplay[T any] struct {
-	replay *replay.Replay[T]
-	mu     sync.RWMutex
-}
-
-func NewSyncReplay[T any](maxSize int, expiry time.Duration) *SyncReplay[T] {
-	return &SyncReplay[T]{
-		replay: replay.New[T](maxSize, expiry),
-	}
-}
-
-func (sr *SyncReplay[T]) Add(evts ...T) {
-	sr.mu.Lock()
-	defer sr.mu.Unlock()
-	sr.replay.Add(evts...)
-}
-
-func (sr *SyncReplay[T]) All() iter.Seq[T] {
-	sr.mu.RLock()
-	defer sr.mu.RUnlock()
-	return sr.replay.All()
-}
 
 type Event struct {
 	ID int
@@ -92,7 +65,7 @@ type Event struct {
 
 func main() {
 	// Create a sync replay buffer with the type "Event"
-	sr := NewSyncReplay[Event](64, 256*time.Second)
+	sr := replay.NewSyncReplay[Event](64, 256*time.Second)
 	go func() {
 		var id int
 		for {
@@ -107,23 +80,17 @@ func main() {
 	fmt.Println("wait 5s for the replay buffer to contain events")
 	time.Sleep(5 * time.Second)
 
-	var wg sync.WaitGroup
-
-	wg.Add(1)
-	go worker(&wg, 1, sr)
+	worker(1, sr)
 
 	fmt.Println("wait 3s for the replay buffer to contain more events")
 	time.Sleep(3 * time.Second)
 
-	wg.Add(1)
-	go worker(&wg, 2, sr)
+	worker(2, sr)
 
-	wg.Wait()
 	fmt.Println("done. Notice that the 2nd worker replayed more events than the 1st worker?")
 }
 
-func worker[T Event](wg *sync.WaitGroup, id int, sr *SyncReplay[Event]) {
-	defer wg.Done()
+func worker[T Event](id int, sr *replay.SyncReplay[Event]) {
 	for evt := range sr.All() {
 		fmt.Printf("worker ID: %d, event: %d\n", id, evt.ID)
 	}

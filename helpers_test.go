@@ -15,7 +15,7 @@ func assertEqual[T any](t testing.TB, got, correct T) {
 }
 
 // assertEqualForAll check if the replayed events are equal. If they are not, it logs using t.Fatalf()
-func assertEqualForAll[T any](t testing.TB, r *Replay[T], correct []T) {
+func assertEqualForAll[T any](t testing.TB, r Replayer[T], correct []T) {
 	t.Helper()
 	var got []T
 	for evt := range r.All() {
