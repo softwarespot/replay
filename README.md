@@ -5,7 +5,7 @@
 **Replay** is a generic compatible module with a thread (**SyncReplay**) and non-thread (**Replay**) safe implementation. It's designed to store and manage a fixed-size buffer of events with expiration logic in-built.
 
 This is particularly useful for cases where you need to keep track of recent events, while automatically discarding those which are outdated.
-For example, this could be used in a chat application where new users who join, must see the recently posted messages.
+For example, this could be used in a chat application, where new users who join, should see the recently sent messages.
 
 Examples of using this module can be found from the [./examples](./examples) directory.
 
