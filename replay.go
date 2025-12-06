@@ -15,7 +15,7 @@ type replayedEvent[T any] struct {
 
 // Replay is a generic, non-thread safe replay buffer.
 type Replay[T any] struct {
-	idx     int
+	tail    int
 	events  []replayedEvent[T]
 	size    int
 	maxSize int
@@ -25,7 +25,7 @@ type Replay[T any] struct {
 // New initializes a replay buffer.
 func New[T any](maxSize int, expiry time.Duration) *Replay[T] {
 	return &Replay[T]{
-		idx:     0,
+		tail:    0,
 		events:  make([]replayedEvent[T], maxSize),
 		size:    0,
 		maxSize: maxSize,
@@ -39,12 +39,12 @@ func (r *Replay[T]) All() iter.Seq[T] {
 		now := nowFn()
 
 		// Start from the oldest entry
-		start := r.idx - r.size
-		if start < 0 {
-			start += r.maxSize
+		head := r.tail - r.size
+		if head < 0 {
+			head += r.maxSize
 		}
 		for i := 0; i < r.size; i++ {
-			idx := (start + i) % r.maxSize
+			idx := (head + i) % r.maxSize
 			if evt := r.events[idx]; evt.expires.After(now) {
 				if !yield(evt.event) {
 					return
@@ -58,11 +58,11 @@ func (r *Replay[T]) All() iter.Seq[T] {
 // If the replay buffer is full, then the oldest event will be overwritten.
 func (r *Replay[T]) Add(evts ...T) {
 	for _, evt := range evts {
-		r.events[r.idx] = replayedEvent[T]{
+		r.events[r.tail] = replayedEvent[T]{
 			event:   evt,
 			expires: nowFn().Add(r.expiry),
 		}
-		r.idx = (r.idx + 1) % r.maxSize
+		r.tail = (r.tail + 1) % r.maxSize
 
 		if r.size < r.maxSize {
 			r.size++
@@ -73,6 +73,6 @@ func (r *Replay[T]) Add(evts ...T) {
 // Clear clears the replay buffer.
 func (r *Replay[T]) Clear() {
 	clear(r.events)
-	r.idx = 0
+	r.tail = 0
 	r.size = 0
 }
