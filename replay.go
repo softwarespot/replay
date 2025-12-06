@@ -62,11 +62,11 @@ func (r *Replay[T]) Add(evts ...T) {
 			event:   evt,
 			expires: nowFn().Add(r.expiry),
 		}
+		r.tail = (r.tail + 1) % maxSize
 
 		if r.size < maxSize {
 			r.size++
 		}
-		r.tail = (r.tail + 1) % maxSize
 	}
 }
 
