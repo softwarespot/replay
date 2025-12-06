@@ -15,8 +15,8 @@ type replayedEvent[T any] struct {
 
 // Replay is a generic, non-thread safe replay buffer.
 type Replay[T any] struct {
-	tail    int
 	events  []replayedEvent[T]
+	tail    int
 	size    int
 	maxSize int
 	expiry  time.Duration
@@ -25,8 +25,8 @@ type Replay[T any] struct {
 // New initializes a replay buffer.
 func New[T any](maxSize int, expiry time.Duration) *Replay[T] {
 	return &Replay[T]{
-		tail:    0,
 		events:  make([]replayedEvent[T], maxSize),
+		tail:    0,
 		size:    0,
 		maxSize: maxSize,
 		expiry:  expiry,
@@ -38,7 +38,7 @@ func (r *Replay[T]) All() iter.Seq[T] {
 	return func(yield func(T) bool) {
 		now := nowFn()
 
-		// Start from the oldest entry
+		// Calculate the head index for the oldest entry
 		head := r.tail - r.size
 		if head < 0 {
 			head += r.maxSize
