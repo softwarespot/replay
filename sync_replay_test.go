@@ -43,5 +43,4 @@ func Test_NewSyncReplay(t *testing.T) {
 	// Should clear the events
 	sr.Clear()
 	assertEqualForAll(t, sr, nil)
-	return
 }

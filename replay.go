@@ -16,9 +16,9 @@ type replayedEvent[T any] struct {
 // Replay is a generic, non-thread safe replay buffer.
 type Replay[T any] struct {
 	events  []replayedEvent[T]
-	tail    int
-	size    int
 	maxSize int
+	size    int
+	tail    int
 	expiry  time.Duration
 }
 
@@ -26,9 +26,9 @@ type Replay[T any] struct {
 func New[T any](maxSize int, expiry time.Duration) *Replay[T] {
 	return &Replay[T]{
 		events:  make([]replayedEvent[T], maxSize),
-		tail:    0,
-		size:    0,
 		maxSize: maxSize,
+		size:    0,
+		tail:    0,
 		expiry:  expiry,
 	}
 }
@@ -62,17 +62,17 @@ func (r *Replay[T]) Add(evts ...T) {
 			event:   evt,
 			expires: nowFn().Add(r.expiry),
 		}
-		r.tail = (r.tail + 1) % r.maxSize
 
 		if r.size < r.maxSize {
 			r.size++
 		}
+		r.tail = (r.tail + 1) % r.maxSize
 	}
 }
 
 // Clear clears the replay buffer.
 func (r *Replay[T]) Clear() {
 	clear(r.events)
-	r.tail = 0
 	r.size = 0
+	r.tail = 0
 }
