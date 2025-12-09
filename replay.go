@@ -17,6 +17,7 @@ type replayedEvent[T any] struct {
 type Replay[T any] struct {
 	events []replayedEvent[T]
 	size   int
+	head   int
 	tail   int
 	expiry time.Duration
 }
@@ -26,6 +27,7 @@ func New[T any](maxSize int, expiry time.Duration) *Replay[T] {
 	return &Replay[T]{
 		events: make([]replayedEvent[T], maxSize),
 		size:   0,
+		head:   0,
 		tail:   0,
 		expiry: expiry,
 	}
@@ -37,13 +39,8 @@ func (r *Replay[T]) All() iter.Seq[T] {
 		now := nowFn()
 		maxSize := len(r.events)
 
-		// Calculate the head index for the oldest entry
-		head := r.tail - r.size
-		if head < 0 {
-			head += maxSize
-		}
 		for i := 0; i < r.size; i++ {
-			idx := (head + i) % maxSize
+			idx := (r.head + i) % maxSize
 			if evt := r.events[idx]; evt.expires.After(now) {
 				if !yield(evt.event) {
 					return
@@ -58,13 +55,16 @@ func (r *Replay[T]) All() iter.Seq[T] {
 func (r *Replay[T]) Add(evts ...T) {
 	maxSize := len(r.events)
 	for _, evt := range evts {
+		isFull := r.size == maxSize
 		r.events[r.tail] = replayedEvent[T]{
 			event:   evt,
 			expires: nowFn().Add(r.expiry),
 		}
 		r.tail = (r.tail + 1) % maxSize
 
-		if r.size < maxSize {
+		if isFull {
+			r.head = (r.head + 1) % maxSize
+		} else {
 			r.size++
 		}
 	}
@@ -74,5 +74,6 @@ func (r *Replay[T]) Add(evts ...T) {
 func (r *Replay[T]) Clear() {
 	clear(r.events)
 	r.size = 0
+	r.head = 0
 	r.tail = 0
 }
