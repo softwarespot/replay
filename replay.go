@@ -55,14 +55,13 @@ func (r *Replay[T]) All() iter.Seq[T] {
 func (r *Replay[T]) Add(evts ...T) {
 	maxSize := len(r.events)
 	for _, evt := range evts {
-		isFull := r.size == maxSize
 		r.events[r.tail] = replayedEvent[T]{
 			event:   evt,
 			expires: nowFn().Add(r.expiry),
 		}
 		r.tail = (r.tail + 1) % maxSize
 
-		if isFull {
+		if r.size == maxSize {
 			r.head = (r.head + 1) % maxSize
 		} else {
 			r.size++
