@@ -19,11 +19,11 @@ func NewSyncReplay[T any](maxSize int, expiry time.Duration) *SyncReplay[T] {
 	}
 }
 
-// All returns an iterator that yields all non-expired events.
-func (sr *SyncReplay[T]) All() iter.Seq[T] {
+// Iter returns an iterator that yields all non-expired events.
+func (sr *SyncReplay[T]) Iter() iter.Seq[T] {
 	sr.mu.RLock()
 	defer sr.mu.RUnlock()
-	return sr.replay.All()
+	return sr.replay.Iter()
 }
 
 // Add adds one or more events to the sync replay buffer.

@@ -6,15 +6,15 @@ import (
 	"time"
 )
 
-// assertEqualForAll check if the replayed events are equal. If they are not, it logs using t.Fatalf()
-func assertEqualForAll[T any](t testing.TB, r Replayer[T], correct []T) {
+// assertEqual check if the replayed events are equal. If they are not, it logs using t.Fatalf()
+func assertEqual[T any](t testing.TB, r Replayer[T], correct []T) {
 	t.Helper()
 	var got []T
-	for evt := range r.All() {
+	for evt := range r.Iter() {
 		got = append(got, evt)
 	}
 	if !reflect.DeepEqual(got, correct) {
-		t.Fatalf("assertEqualForAll: expected values to be equal, got:\n%+v\ncorrect:\n%+v", got, correct)
+		t.Fatalf("assertEqual: expected values to be equal, got:\n%+v\ncorrect:\n%+v", got, correct)
 	}
 }
 

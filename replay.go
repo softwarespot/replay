@@ -33,8 +33,8 @@ func New[T any](maxSize int, expiry time.Duration) *Replay[T] {
 	}
 }
 
-// All returns an iterator that yields all non-expired events.
-func (r *Replay[T]) All() iter.Seq[T] {
+// Iter returns an iterator that yields all non-expired events.
+func (r *Replay[T]) Iter() iter.Seq[T] {
 	return func(yield func(T) bool) {
 		now := nowFn()
 		maxSize := len(r.events)

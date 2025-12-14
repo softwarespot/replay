@@ -12,7 +12,7 @@ func Test_NewSyncReplay(t *testing.T) {
 	nowFn = func() time.Time { return parseAsDateTime("2024-10-01 00:00:00") }
 	sr.Add("Event 1")
 	sr.Add("Event 2")
-	assertEqualForAll(t, sr, []string{
+	assertEqual(t, sr, []string{
 		"Event 1",
 		"Event 2",
 	})
@@ -23,7 +23,7 @@ func Test_NewSyncReplay(t *testing.T) {
 	sr.Add("Event 4")
 
 	// Should not return the expired events
-	assertEqualForAll(t, sr, []string{
+	assertEqual(t, sr, []string{
 		"Event 3",
 		"Event 4",
 	})
@@ -32,7 +32,7 @@ func Test_NewSyncReplay(t *testing.T) {
 	nowFn = func() time.Time { return parseAsDateTime("2024-10-01 00:00:11") }
 	sr.Add("Event 5")
 	sr.Add("Event 6", "Event 7")
-	assertEqualForAll(t, sr, []string{
+	assertEqual(t, sr, []string{
 		"Event 3",
 		"Event 4",
 		"Event 5",
@@ -42,5 +42,5 @@ func Test_NewSyncReplay(t *testing.T) {
 
 	// Should clear the events
 	sr.Clear()
-	assertEqualForAll(t, sr, nil)
+	assertEqual(t, sr, nil)
 }

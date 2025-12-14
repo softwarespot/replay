@@ -39,7 +39,7 @@ func main() {
 }
 
 func worker[T Event](id int, sr *replay.SyncReplay[Event]) {
-	for evt := range sr.All() {
+	for evt := range sr.Iter() {
 		fmt.Printf("worker ID: %d, event: %d\n", id, evt.ID)
 	}
 }
